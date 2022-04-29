@@ -12,15 +12,12 @@ final_df = pd.merge(df_training_tweet, df_labels, on="TweetID")
 final_df
 
 
-# In[15]:
 
 
 df_testing_tweet = pd.read_csv("/Users/arjunanandapadmanabhan/Downloads/wn22_data/wn22_PA_testing_tweets.txt", sep=",")
 
 df_testing_tweet
 
-
-# In[16]:
 
 
 import re
@@ -37,7 +34,6 @@ train_clean = clean_text(final_df, "Tweet")
 train_clean.Tweet[4]
 
 
-# In[17]:
 
 
 import pandas as pd
@@ -56,7 +52,7 @@ test_clean['no_contract'] = test_clean['Tweet'].apply(lambda x: [contractions.fi
 test_clean['Tweet'] = [' '.join(map(str, l)) for l in test_clean['no_contract']]
 
 
-# In[18]:
+
 
 
 train_clean['tokenized'] = train_clean['Tweet'].apply(word_tokenize)
@@ -66,7 +62,7 @@ test_clean['tokenized'] = test_clean['Tweet'].apply(word_tokenize)
 test_clean['tokenized'] = test_clean['tokenized'].apply(lambda x: [word.lower() for word in x])
 
 
-# In[19]:
+
 
 
 punc = string.punctuation
@@ -75,7 +71,6 @@ train_clean['no_punc'] = train_clean['tokenized'].apply(lambda x: [word for word
 test_clean['no_punc'] = test_clean['tokenized'].apply(lambda x: [word for word in x if word not in punc])
 
 
-# In[20]:
 
 
 stop_words = set(stopwords.words('english'))
@@ -84,7 +79,7 @@ train_clean['tokenized']  = train_clean['no_punc'] .apply(lambda x: [word for wo
 test_clean['tokenized']  = test_clean['no_punc'] .apply(lambda x: [word for word in x if word not in stop_words])
 
 
-# In[21]:
+
 
 
 train_clean['pos_tags'] = train_clean['tokenized'].apply(nltk.tag.pos_tag)
@@ -92,7 +87,7 @@ train_clean['pos_tags'] = train_clean['tokenized'].apply(nltk.tag.pos_tag)
 test_clean['pos_tags'] = test_clean['tokenized'].apply(nltk.tag.pos_tag)
 
 
-# In[22]:
+
 
 
 def get_wordnet_pos(tag):
@@ -111,7 +106,7 @@ train_clean['wordnet_pos'] = train_clean['pos_tags'].apply(lambda x: [(word, get
 test_clean['wordnet_pos'] = test_clean['pos_tags'].apply(lambda x: [(word, get_wordnet_pos(pos_tag)) for (word, pos_tag) in x])
 
 
-# In[45]:
+
 
 
 wnl = WordNetLemmatizer()
@@ -124,8 +119,7 @@ train_clean['Tweet'] = [' '.join(map(str, l)) for l in train_clean['lemmatized']
 test_clean['Tweet']  = [' '.join(map(str, l)) for l in test_clean['lemmatized']]
 
 
-# In[25]:
-
+# Can be used to check the frequency of a term
 
 # d = {}
 # for word in train_clean['Tweet']:
@@ -135,8 +129,6 @@ test_clean['Tweet']  = [' '.join(map(str, l)) for l in test_clean['lemmatized']]
 #         else:
 #             d[item] = 1
 
-
-# In[26]:
 
 
 # for i, word in enumerate(train_clean['Tweet']):
@@ -149,7 +141,6 @@ test_clean['Tweet']  = [' '.join(map(str, l)) for l in test_clean['lemmatized']]
 # train_clean['Tweet'][0]
 
 
-# In[27]:
 
 
 from sklearn.utils import resample
@@ -163,7 +154,6 @@ train_upsampled = pd.concat([train_minority_upsampled, train_majority])
 train_upsampled['Label'].value_counts()
 
 
-# In[122]:
 
 
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -208,8 +198,6 @@ pipeline_svc = Pipeline([
 #     ('nb', GradientBoostingClassifier(n_estimators=10000, subsample=1))
 # ])
 
-
-# In[123]:
 
 
 # from sklearn.model_selection import train_test_split
@@ -324,23 +312,16 @@ pred.columns = ['Label']
 pred
 
 
-# In[147]:
-
 
 data = [df_testing_tweet['TweetID'], pred['Label']]
 headers = ["TweetID", "Label"]
 
 Final = pd.concat(data, axis=1, keys=headers)
-Final
-
-
-# In[148]:
-
 
 Final.to_csv(r'/Users/arjunanandapadmanabhan/Downloads/wn22_data/output_2.txt', header=True, index=None, sep=',', mode='a')
 
 
-# In[136]:
+# Confusion Matrix
 
 
 from sklearn.metrics import confusion_matrix
@@ -381,27 +362,13 @@ def plot_confusion_matrix(cm, classes,
     plt.tight_layout()
 
 
-# In[121]:
 
 
-# classes=list(set(y_test))
-# cm = confusion_matrix(y_test, y_predic, labels=classes)
-# plot_confusion_matrix(cm, classes=classes, title='SGD')
+classes=list(set(y_test))
+cm = confusion_matrix(y_test, y_predic, labels=classes)
+plot_confusion_matrix(cm, classes=classes, title='SGD')
 
 
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
 
 
 
